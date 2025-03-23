@@ -21,8 +21,11 @@ import com.NgoServer.exceptions.PasswordNotMatchException;
 import com.NgoServer.exceptions.UserAlreadyExists;
 import com.NgoServer.exceptions.UserNotFoundException;
 import com.NgoServer.jwt.JwtUtil;
+import com.NgoServer.models.Donor;
 import com.NgoServer.models.User;
 import com.NgoServer.repo.AuthRepository;
+import com.NgoServer.repo.DonorRepository;
+import com.NgoServer.utils.Role;
 
 @Service
 public class AuthServices implements UserDetailsService {
@@ -36,6 +39,10 @@ public class AuthServices implements UserDetailsService {
     @Autowired
     private JwtUtil jwtUtil;
 
+
+    @Autowired
+    private DonorRepository donorRepository;
+
     // register user
     public ResponseDTO registerUser(UserDTO userDTO) throws UserAlreadyExists {
 
@@ -46,7 +53,17 @@ public class AuthServices implements UserDetailsService {
         }
         User user = toUser(userDTO);
 
-        authRepository.save(user);
+        if(userDTO.role() == Role.DONOR) {
+            
+            Donor donor = new Donor();
+            donor.setUser(user);
+            authRepository.save(user);
+            donorRepository.save(donor);
+        }else {
+            authRepository.save(user);
+        }
+
+     
 
         return new ResponseDTO("User Registered", HttpStatus.CREATED.value());
 
@@ -83,6 +100,8 @@ public class AuthServices implements UserDetailsService {
         // set user
         user.setUsername(userDTO.username());
 
+        user.setRole(userDTO.role());
+
         // password not empty
         if (userDTO.password().isEmpty()) {
             throw new FoundEmptyElementException("Password is required");
@@ -94,8 +113,7 @@ public class AuthServices implements UserDetailsService {
         if (userDTO.role() == null) {
             throw new FoundEmptyElementException("Role is required");
         }
-        // set role
-        user.setRole(userDTO.role());
+        
 
         // email not empty
         if (userDTO.email().isEmpty()) {
@@ -104,7 +122,8 @@ public class AuthServices implements UserDetailsService {
         // set email
         user.setEmail(userDTO.email());
         user.setPhoneNumber(userDTO.phoneNumber());
-        ;
+        
+       
         user.setCreatedAt(LocalDateTime.now());
         return user;
     }
@@ -118,7 +137,14 @@ public class AuthServices implements UserDetailsService {
             throw new UsernameNotFoundException("User Not Found");
         }
 
-        return org.springframework.security.core.userdetails.User.withUserDetails(user.get())
+        if (user.get().getRole() == null) {
+            throw new UsernameNotFoundException("User Not Found");
+        }
+
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.withUsername(user.get().getEmail())
+                .password(user.get().getPasswordHash()).authorities(user.get().getRole().toString()).build();
+
+        return org.springframework.security.core.userdetails.User.withUserDetails(userDetails)
                 .password(user.get().getPasswordHash()).build();
     }
 

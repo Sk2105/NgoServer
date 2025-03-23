@@ -252,6 +252,7 @@ Response Error
 ## Campaign Endpoints
 
 
+
 ### Get All Campaign
 
 ```bash
@@ -551,5 +552,403 @@ Response Error
 
 
 
+
+
+
+
+## Donor Endpoints
+
+### Get All Donors
+
+```bash
+GET /donors
+```
+
+Header
+```json
+{
+    "Authorization": "Bearer <token>"
+}           
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Bearer token |
+
+Response Success
+```json
+[
+    {
+        "id": 3,
+        "user": {
+            "id": 10,
+            "username": "Aarfi",
+            "email": "cam105@gmail.com",
+            "phoneNumber": "123456789",
+            "role": "DONOR",
+            "createdAt": "2025-03-22T10:55:17.25863"
+        },
+        "totalDonation": 0.0,
+        "lastDonation": "2025-03-22T10:55:17.25863"
+    },
+    {
+        "id": 4,
+        "user": {
+            "id": 11,
+            "username": "Sachin",
+            "email": "sacin105@gmail.com",
+            "phoneNumber": "123456789",
+            "role": "DONOR",
+            "createdAt": "2025-03-22T10:58:16.482636"
+        },
+        "totalDonation": 0.0,
+        "lastDonation": "2025-03-22T10:58:16.482998"
+    }
+]
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| id | number | Donor's ID |
+| username | string | Donor's username |
+| email | string | Donor's email |
+| phoneNumber | string | Donor's phone number |
+| role | string | Donor's role |
+| createdAt | string | Donor's creation date |
+| totalDonation | number | Donor's total donation |
+| lastDonation | string | Donor's last donation |
+
+Response Error
+```json
+{
+    "message": "Donor Not Found",
+    "status": 404
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| message | string | Error message |
+| status | number | HTTP status code |
+
+### Get Donor By Id
+
+```bash
+GET /donors/{id}
+```
+
+Header
+```json
+{
+    "Authorization": "Bearer <token>"
+}           
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Bearer token |
+
+Response Success
+```json
+{
+    "id": 4,
+    "user": {
+        "id": 11,
+        "username": "Sachin",
+        "email": "sacin105@gmail.com",
+        "phoneNumber": "123456789",
+        "role": "DONOR",
+        "createdAt": "2025-03-22T10:58:16.482636"
+    },
+    "totalDonation": 0.0,
+    "lastDonation": "2025-03-22T10:58:16.482998",
+    "campaigns": []
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| id | number | Donor's ID |
+| username | string | Donor's username |
+| email | string | Donor's email |
+| phoneNumber | string | Donor's phone number |
+| role | string | Donor's role |
+| createdAt | string | Donor's creation date |
+| totalDonation | number | Donor's total donation |
+| lastDonation | string | Donor's last donation |
+| campaigns | array | Donor's campaigns |
+
+Response Error
+```json
+{
+    "message": "Donor Not Found",
+    "status": 404
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| message | string | Error message |
+| status | number | HTTP status code |
+
+## Blog Endpoints
+
+### Get All Blogs
+
+```bash
+GET /blogs
+```
+
+Header
+```json
+{
+    "Authorization": "Bearer <token>"
+}           
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Bearer token |
+
+
+Response Success
+```json
+[
+    {
+        "id": 3,
+        "title": "Change Socity 2",
+        "content": "lorem djfalkjdslkajfjdasj",
+        "image": "http://jfajskljla",
+        "createdAt": "2025-03-22T23:36:59.928461",
+        "updatedAt": null,
+        "author": {
+            "id": 1,
+            "username": "Sachin Kumar",
+            "email": "sk2105@gmail.com",
+            "phoneNumber": "9117849946",
+            "role": "ADMIN",
+            "createdAt": "2025-03-20T22:47:49.226321"
+        }
+    },
+    {
+        "id": 4,
+        "title": "Change Socity 3",
+        "content": "lorem djfalkjdslkajfjdasj",
+        "image": "http://jfajskljla",
+        "createdAt": "2025-03-23T14:56:10.278028",
+        "updatedAt": null,
+        "author": {
+            "id": 1,
+            "username": "Sachin Kumar",
+            "email": "sk2105@gmail.com",
+            "phoneNumber": "9117849946",
+            "role": "ADMIN",
+            "createdAt": "2025-03-20T22:47:49.226321"
+        }
+    }
+]
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| id | number | Blog's ID |
+| title | string | Blog's title |
+| content | string | Blog's content |
+| image | string | Blog's image |
+| createdAt | string | Blog's creation date |
+| updatedAt | string | Blog's update date |
+| author | object | Blog's author |
+
+Response Error
+```json
+{
+    "message": "Blog Not Found",
+    "status": 404
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| message | string | Error message |
+| status | number | HTTP status code |
+
+
+### Add new blog
+
+```bash
+POST /blogs
+```
+
+
+Header
+```json
+{
+    "Authorization": "Bearer <token>"
+}           
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Bearer token |
+
+
+Body
+```json
+{
+    "title": "New Blog",
+    "content": "lorem djfalkjdslkajfjdasj",
+    "image": "http://jfajskljla"
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| title | string | Blog's title |
+| content | string | Blog's content |
+| image | string | Blog's image |
+
+Response Success
+```json
+{
+    "message": "Blog Added Successfully",
+    "status": 200
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| message | string | Success message |
+| status | number | HTTP status code |
+
+Response Error
+```json
+{
+    "message": "Blog Already Exists",
+    "status": 400
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| message | string | Error message |
+| status | number | HTTP status code |
+
+
+### Update Blog
+
+```bash
+PUT /blogs/{id}
+```
+
+Header
+```json
+{
+    "Authorization": "Bearer <token>"
+}
+```
+
+Body
+```json
+{
+    "title": "New Blog",
+    "content": "lorem djfalkjdslkajfjdasj",
+    "image": "http://jfajskljla"
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| title | string | Blog's title |
+| content | string | Blog's content |
+| image | string | Blog's image |
+
+Response Success
+```json
+{
+    "message": "Blog Updated Successfully",
+    "status": 200
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| message | string | Success message |
+| status | number | HTTP status code |
+
+Response Error
+```json
+{
+    "message": "Blog Not Found",
+    "status": 404
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| message | string | Error message |
+| status | number | HTTP status code |
+
+
+### Delete Blog
+
+```bash
+DELETE /blogs/1
+```
+
+Header
+```json
+{
+    "Authorization": "Bearer <token>"
+}           
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Bearer token |
+
+
+Response Success
+```json
+{
+    "message": "Blog Deleted Successfully",
+    "status": 200
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| message | string | Success message |
+| status | number | HTTP status code |
+
+Response Error
+```json
+{
+    "message": "Blog Not Found",
+    "status": 404
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| message | string | Error message |
+| status | number | HTTP status code |
+
+
+### Get Blog By Id
+
+```bash
+GET /blogs/{id}
+```
+
+Header
+```json
+{
+    "Authorization": "Bearer <token>"
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Bearer token |
 
 

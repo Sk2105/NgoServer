@@ -1,5 +1,6 @@
 package com.NgoServer.models;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.NgoServer.utils.CampaignStatus;
 
@@ -10,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,8 +35,12 @@ public class Campaign {
     private String description;
     @Column(nullable = false)
     private Double goalAmount;
+    @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
     private Double collectedAmount;
     @Enumerated(EnumType.STRING)
     private CampaignStatus status; // ACTIVE, COMPLETED, CANCELLED
+
+    @ManyToMany(mappedBy = "campaigns")
+    private List<Donor> donors;
 }

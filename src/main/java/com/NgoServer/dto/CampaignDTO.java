@@ -9,5 +9,7 @@ public record CampaignDTO(
     Double collectedAmount,
     CampaignStatus status
 ) {
+
+   
     
 }
