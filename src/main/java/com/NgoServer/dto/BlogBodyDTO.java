@@ -1,6 +1,6 @@
 package com.NgoServer.dto;
 
-public record BlogDTO(
+public record BlogBodyDTO(
     String title,
     String content,
     String image

@@ -1,6 +1,7 @@
 package com.NgoServer.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,10 @@ import com.NgoServer.exceptions.UserNotFoundException;
 import com.NgoServer.jwt.JwtUtil;
 import com.NgoServer.models.Donor;
 import com.NgoServer.models.User;
+import com.NgoServer.models.Volunteer;
 import com.NgoServer.repo.AuthRepository;
 import com.NgoServer.repo.DonorRepository;
+import com.NgoServer.repo.VolunteerRepository;
 import com.NgoServer.utils.Role;
 
 @Service
@@ -39,9 +42,11 @@ public class AuthServices implements UserDetailsService {
     @Autowired
     private JwtUtil jwtUtil;
 
-
     @Autowired
     private DonorRepository donorRepository;
+
+    @Autowired
+    private VolunteerRepository volunteerRepository;
 
     // register user
     public ResponseDTO registerUser(UserDTO userDTO) throws UserAlreadyExists {
@@ -53,17 +58,21 @@ public class AuthServices implements UserDetailsService {
         }
         User user = toUser(userDTO);
 
-        if(userDTO.role() == Role.DONOR) {
-            
+        if (userDTO.role() == Role.DONOR) {
             Donor donor = new Donor();
+            user.setRole(Role.DONOR);
             donor.setUser(user);
             authRepository.save(user);
             donorRepository.save(donor);
-        }else {
+        } else if (userDTO.role() == Role.VOLUNTEER) {
+            user.setRole(Role.VOLUNTEER);
+            authRepository.save(user);
+            Volunteer volunteer = new Volunteer();
+            volunteer.setUser(user);
+            volunteerRepository.save(volunteer);
+        } else {
             authRepository.save(user);
         }
-
-     
 
         return new ResponseDTO("User Registered", HttpStatus.CREATED.value());
 
@@ -100,8 +109,6 @@ public class AuthServices implements UserDetailsService {
         // set user
         user.setUsername(userDTO.username());
 
-        user.setRole(userDTO.role());
-
         // password not empty
         if (userDTO.password().isEmpty()) {
             throw new FoundEmptyElementException("Password is required");
@@ -113,7 +120,7 @@ public class AuthServices implements UserDetailsService {
         if (userDTO.role() == null) {
             throw new FoundEmptyElementException("Role is required");
         }
-        
+
 
         // email not empty
         if (userDTO.email().isEmpty()) {
@@ -122,8 +129,7 @@ public class AuthServices implements UserDetailsService {
         // set email
         user.setEmail(userDTO.email());
         user.setPhoneNumber(userDTO.phoneNumber());
-        
-       
+
         user.setCreatedAt(LocalDateTime.now());
         return user;
     }
@@ -168,6 +174,10 @@ public class AuthServices implements UserDetailsService {
         } else {
             throw new PasswordNotMatchException("Invalid Password");
         }
+    }
+
+    public List<User> getAllUsers() {
+        return authRepository.findAll();
     }
 
 }

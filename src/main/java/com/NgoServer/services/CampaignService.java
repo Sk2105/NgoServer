@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.NgoServer.dto.CampaignDTO;
+import com.NgoServer.dto.ResponseDTO;
 import com.NgoServer.exceptions.CampaignAlreadyExits;
 import com.NgoServer.exceptions.CampaignNotFoundException;
 import com.NgoServer.models.Campaign;
@@ -19,11 +21,11 @@ public class CampaignService {
     @Autowired
     private CampaignRepository campaignRepository;
 
-    public List<Campaign> getAllCampaigns() {
-        return campaignRepository.findAll();
+    public List<CampaignDTO> getAllCampaigns() {
+        return campaignRepository.findAllCampaign();
     }
 
-    public Campaign addCampaign(CampaignDTO campaignDTO) throws CampaignAlreadyExits {
+    public ResponseDTO addCampaign(CampaignDTO campaignDTO) throws CampaignAlreadyExits {
 
         Campaign campaign = toCampaign(campaignDTO);
 
@@ -31,7 +33,11 @@ public class CampaignService {
         if (campaignRepository.findByTitle(campaignDTO.title()).isPresent()) {
             throw new CampaignAlreadyExits("Campaign with same title already exists");
         }
-        return campaignRepository.save(campaign);
+        campaignRepository.save(campaign);
+
+        return new ResponseDTO(
+                "Campaign added successfully",
+                HttpStatus.OK.value());
 
     }
 
@@ -57,13 +63,21 @@ public class CampaignService {
         return optionalCampaign.get();
     }
 
-    public Campaign updateCampaign(Long id, CampaignDTO campaignDTO) throws CampaignNotFoundException {
+    public ResponseDTO updateCampaign(Long id, CampaignDTO campaignDTO) throws CampaignNotFoundException {
+        Optional<Campaign> optionalCampaign = campaignRepository.findById(id);
+        if (optionalCampaign.isEmpty()) {
+            throw new CampaignNotFoundException("Campaign not found");
+        }
         if (campaignRepository.findByTitle(campaignDTO.title()).isPresent()) {
             throw new CampaignAlreadyExits("Campaign with same title already exists");
         }
         Campaign campaign = toCampaign(campaignDTO);
         campaign.setId(id);
-        return campaignRepository.save(campaign);
+        campaignRepository.save(campaign);
+        return new ResponseDTO(
+                "Campaign updated successfully",
+                HttpStatus.OK.value());
+
     }
 
     public void deleteCampaign(Long id) throws CampaignNotFoundException {

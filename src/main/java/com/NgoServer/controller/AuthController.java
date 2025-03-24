@@ -26,7 +26,7 @@ public class AuthController {
     private AuthServices authServices;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDTO userDTO)  {
+    public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
         ResponseDTO dto = authServices.registerUser(userDTO);
         return ResponseEntity.ok().body(dto);
     }
@@ -53,6 +53,11 @@ public class AuthController {
             throws UserNotFoundException {
         return ResponseEntity.ok()
                 .body(authServices.changePassword(changePasswordDTO.password(), changePasswordDTO.newPassword()));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.ok().body(authServices.getAllUsers());
     }
 
 }

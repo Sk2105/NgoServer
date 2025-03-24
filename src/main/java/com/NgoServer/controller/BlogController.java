@@ -10,17 +10,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.NgoServer.dto.BlogDTO;
+import com.NgoServer.dto.BlogBodyDTO;
+import com.NgoServer.dto.CommentBodyDTO;
 import com.NgoServer.services.BlogServices;
 
 @RestController
 @RequestMapping("blogs")
 public class BlogController {
 
-
     @Autowired
     private BlogServices blogService;
-
 
     @GetMapping
     public ResponseEntity<?> getAllBlogs() {
@@ -33,12 +32,12 @@ public class BlogController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createBlog(@RequestBody BlogDTO blogDTO) {
+    public ResponseEntity<?> createBlog(@RequestBody BlogBodyDTO blogDTO) {
         return ResponseEntity.ok().body(blogService.createBlog(blogDTO));
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> updateBlog(@PathVariable Long id, @RequestBody BlogDTO blogDTO) {
+    public ResponseEntity<?> updateBlog(@PathVariable Long id, @RequestBody BlogBodyDTO blogDTO) {
         return ResponseEntity.ok().body(blogService.updateBlog(id, blogDTO));
     }
 
@@ -47,8 +46,9 @@ public class BlogController {
         return ResponseEntity.ok().body(blogService.deleteBlog(id));
     }
 
-    
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<?> addComment(@PathVariable Long id, @RequestBody CommentBodyDTO body) {
+        return ResponseEntity.ok().body(blogService.addComment(id, body));
+    }
 
-
-    
 }

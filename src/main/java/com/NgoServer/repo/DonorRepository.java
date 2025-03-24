@@ -107,7 +107,7 @@ public interface DonorRepository extends JpaRepository<Donor, Long> {
      * @return a list of campaign DTOs
      */
     @Query(value = """
-            SELECT c.id, c.title, c.description, c.goal_amount, c.collected_amount, c.status
+            SELECT c.id, c.title, c.description, c.created_at, c.goal_amount, c.collected_amount, c.status
             FROM donor_campaign dc
             JOIN campaigns c ON dc.campaign_id = c.id
             WHERE dc.donor_id = :donorId;
@@ -121,6 +121,7 @@ public interface DonorRepository extends JpaRepository<Donor, Long> {
                         campaignData -> new CampaignDTO(
                                 (String) campaignData[1], // Title
                                 (String) campaignData[2], // Description
+                                ((Timestamp) campaignData[3]).toLocalDateTime(), // CreatedAt
                                 (Double) campaignData[3], // GoalAmount
                                 (Double) campaignData[4], // CollectedAmount
                                 getCampaignStatus((String) campaignData[5]))) // CampaignStatus
