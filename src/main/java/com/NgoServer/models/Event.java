@@ -57,6 +57,7 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventStatus status = EventStatus.ACTIVE;
 
+
     @ManyToMany(mappedBy = "events",cascade = CascadeType.ALL)
     private List<Volunteer> volunteers = new ArrayList<>();
     

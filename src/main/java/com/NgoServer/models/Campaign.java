@@ -14,7 +14,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -40,7 +39,7 @@ public class Campaign {
     private String description;
 
     @Column(nullable = false)
-    private Double goalAmount;
+    private Double goalAmount = 0.0;
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
@@ -48,7 +47,7 @@ public class Campaign {
     private Double collectedAmount = 0.0;
 
     @Enumerated(EnumType.STRING)
-    private CampaignStatus status; // ACTIVE, COMPLETED, CANCELLED
+    private CampaignStatus status = CampaignStatus.ACTIVE; // ACTIVE, COMPLETED, CANCELLED
 
     @OneToMany(mappedBy = "campaign",cascade = CascadeType.ALL)
     private List<Donation> donations = new ArrayList<>();

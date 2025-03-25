@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.NgoServer.dto.CampaignDTO;
+import com.NgoServer.dto.CampaignBodyDTO;
+import com.NgoServer.dto.CampaignResponseDTO;
 import com.NgoServer.dto.ResponseDTO;
 import com.NgoServer.exceptions.CampaignAlreadyExits;
 import com.NgoServer.exceptions.CampaignNotFoundException;
+import com.NgoServer.exceptions.FoundEmptyElementException;
 import com.NgoServer.models.Campaign;
 import com.NgoServer.repo.CampaignRepository;
 
@@ -21,11 +23,11 @@ public class CampaignService {
     @Autowired
     private CampaignRepository campaignRepository;
 
-    public List<CampaignDTO> getAllCampaigns() {
+    public List<CampaignResponseDTO> getAllCampaigns() {
         return campaignRepository.findAllCampaign();
     }
 
-    public ResponseDTO addCampaign(CampaignDTO campaignDTO) throws CampaignAlreadyExits {
+    public ResponseDTO addCampaign(CampaignBodyDTO campaignDTO) throws CampaignAlreadyExits {
 
         Campaign campaign = toCampaign(campaignDTO);
 
@@ -41,21 +43,23 @@ public class CampaignService {
 
     }
 
-    private Campaign toCampaign(CampaignDTO campaignDTO) {
+    private Campaign toCampaign(CampaignBodyDTO campaignDTO) {
         Campaign campaign = new Campaign();
+        if (campaignDTO.title().equals("") || campaignDTO.title() == null) {
+            throw new FoundEmptyElementException("Title is found Empty or null");
+        }
         campaign.setTitle(campaignDTO.title());
         campaign.setCreatedAt(LocalDateTime.now());
         campaign.setDescription(campaignDTO.description());
         campaign.setGoalAmount(campaignDTO.goalAmount());
-        campaign.setCollectedAmount(campaignDTO.collectedAmount());
         campaign.setStatus(campaignDTO.status());
 
         return campaign;
 
     }
 
-    public Campaign getCampaignById(Long id) {
-        Optional<Campaign> optionalCampaign = campaignRepository.findById(id);
+    public CampaignResponseDTO getCampaignById(Long id) {
+        Optional<CampaignResponseDTO> optionalCampaign = campaignRepository.findCampaignById(id);
         if (optionalCampaign.isEmpty()) {
             throw new CampaignNotFoundException("Campaign not found");
         }
@@ -63,7 +67,7 @@ public class CampaignService {
         return optionalCampaign.get();
     }
 
-    public ResponseDTO updateCampaign(Long id, CampaignDTO campaignDTO) throws CampaignNotFoundException {
+    public ResponseDTO updateCampaign(Long id, CampaignBodyDTO campaignDTO) throws CampaignNotFoundException {
         Optional<Campaign> optionalCampaign = campaignRepository.findById(id);
         if (optionalCampaign.isEmpty()) {
             throw new CampaignNotFoundException("Campaign not found");
@@ -71,17 +75,20 @@ public class CampaignService {
         if (campaignRepository.findByTitle(campaignDTO.title()).isPresent()) {
             throw new CampaignAlreadyExits("Campaign with same title already exists");
         }
-        Campaign campaign = toCampaign(campaignDTO);
+        Campaign campaign = optionalCampaign.get();
         campaign.setId(id);
+        campaign.setTitle(campaignDTO.title());
+        campaign.setDescription(campaignDTO.description());
+        campaign.setGoalAmount(campaignDTO.goalAmount());
         campaignRepository.save(campaign);
         return new ResponseDTO(
                 "Campaign updated successfully",
                 HttpStatus.OK.value());
-
     }
 
     public void deleteCampaign(Long id) throws CampaignNotFoundException {
-        Campaign campaign = getCampaignById(id);
-        campaignRepository.delete(campaign);
+        getCampaignById(id);
+        campaignRepository.deleteById(id);
+        
     }
 }

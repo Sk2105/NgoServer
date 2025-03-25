@@ -32,7 +32,8 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
                 return findByTitleObjects(title).stream()
                                 .map(this::toBlogResponseDTO)
                                 .findFirst()
-                                .orElse(null);
+                                .orElseThrow(() -> new BlogNotFoundException(
+                                                "Blog with title=" + title + " does not exist"));
         }
 
         @Query(value = """
@@ -66,8 +67,8 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
                                 (String) objects[1],
                                 (String) objects[2],
                                 (String) objects[3],
-                                ((Timestamp) objects[4]).toLocalDateTime(),
-                                ((Timestamp) objects[5]).toLocalDateTime(),
+                                convertToLocalDateTime(objects[4]),
+                                convertToLocalDateTime(objects[5]),
                                 user);
 
         }
@@ -82,22 +83,35 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
         }
 
         private Blog toBlog(Object[] objects) {
-                Blog blog = new Blog();
-                blog.setId((Long) objects[0]);
-                blog.setTitle((String) objects[1]);
-                blog.setContent((String) objects[2]);
-                blog.setImage((String) objects[3]);
-                blog.setCreatedAt(convertToLocalDateTime(objects[4]));
-                blog.setUpdatedAt(convertToLocalDateTime(objects[5]));
+                Long id = (Long) objects[0];
+                String title = (String) objects[1];
+                String content = (String) objects[2];
+                String image = (String) objects[3];
+                LocalDateTime createdAt = convertToLocalDateTime(objects[4]);
+                LocalDateTime updatedAt = convertToLocalDateTime(objects[5]);
+
+                Long authorId = (Long) objects[6];
+                String authorUsername = (String) objects[7];
+                String authorEmail = (String) objects[8];
+                String authorPhoneNumber = (String) objects[9];
+                LocalDateTime authorCreatedAt = convertToLocalDateTime(objects[10]);
+                Role authorRole = (Role) objects[11];
 
                 User author = new User();
-                author.setId((Long) objects[6]);
-                author.setUsername((String) objects[7]);
-                author.setEmail((String) objects[8]);
-                author.setPhoneNumber((String) objects[9]);
-                author.setCreatedAt(convertToLocalDateTime(objects[10]));
-                author.setRole((Role) objects[11]);
+                author.setId(authorId);
+                author.setUsername(authorUsername);
+                author.setEmail(authorEmail);
+                author.setPhoneNumber(authorPhoneNumber);
+                author.setCreatedAt(authorCreatedAt);
+                author.setRole(authorRole);
 
+                Blog blog = new Blog();
+                blog.setId(id);
+                blog.setTitle(title);
+                blog.setContent(content);
+                blog.setImage(image);
+                blog.setCreatedAt(createdAt);
+                blog.setUpdatedAt(updatedAt);
                 blog.setAuthor(author);
                 return blog;
         }
@@ -129,15 +143,15 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
                 comment.setContent((String) objects[1]);
                 comment.setCreatedAt(convertToLocalDateTime(objects[2]));
 
-                User author = new User();
-                author.setId((Long) objects[3]);
-                author.setUsername((String) objects[4]);
-                author.setEmail((String) objects[5]);
-                author.setPhoneNumber((String) objects[6]);
-                author.setCreatedAt(convertToLocalDateTime(objects[7]));
-                author.setRole((Role) objects[8]);
+                User user = new User();
+                user.setId((Long) objects[3]);
+                user.setUsername((String) objects[4]);
+                user.setEmail((String) objects[5]);
+                user.setPhoneNumber((String) objects[6]);
+                user.setCreatedAt(convertToLocalDateTime(objects[7]));
+                user.setRole((Role) objects[8]);
 
-                comment.setUser(author);
+                comment.setUser(user);
 
                 return comment;
         }

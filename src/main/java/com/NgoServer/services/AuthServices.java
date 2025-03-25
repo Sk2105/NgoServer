@@ -71,6 +71,7 @@ public class AuthServices implements UserDetailsService {
             volunteer.setUser(user);
             volunteerRepository.save(volunteer);
         } else {
+            user.setRole(Role.ADMIN);
             authRepository.save(user);
         }
 
@@ -121,7 +122,6 @@ public class AuthServices implements UserDetailsService {
             throw new FoundEmptyElementException("Role is required");
         }
 
-
         // email not empty
         if (userDTO.email().isEmpty()) {
             throw new FoundEmptyElementException("Email is required");
@@ -148,7 +148,7 @@ public class AuthServices implements UserDetailsService {
         }
 
         UserDetails userDetails = org.springframework.security.core.userdetails.User.withUsername(user.get().getEmail())
-                .password(user.get().getPasswordHash()).authorities(user.get().getRole().toString()).build();
+                .password(user.get().getPasswordHash()).authorities("ROLE_" + user.get().getRole().toString()).build();
 
         return org.springframework.security.core.userdetails.User.withUserDetails(userDetails)
                 .password(user.get().getPasswordHash()).build();

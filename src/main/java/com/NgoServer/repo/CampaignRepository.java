@@ -9,63 +9,76 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.NgoServer.dto.CampaignDTO;
+import com.NgoServer.dto.CampaignResponseDTO;
 import com.NgoServer.models.Campaign;
 import com.NgoServer.utils.CampaignStatus;
 
 @Repository
 public interface CampaignRepository extends JpaRepository<Campaign, Long> {
 
-    @Query("""
-            SELECT c.id, c.title, c.description,  c.createdAt ,c.goalAmount, c.collectedAmount, c.status
-            FROM Campaign c
-            WHERE c.id = :id
-            """)
-    List<Object[]> findByIdObjects(long id);
+        @Query("""
+                         SELECT c.id, c.title, c.description, c.createdAt, c.goalAmount, c.collectedAmount, c.status
+                         FROM Campaign c
+                         WHERE c.id = :id
+                        """)
+        List<Object[]> findCampaignByIdObjects(long id);
 
-    default Optional<CampaignDTO> findById(long id) {
-        return Optional.ofNullable(findByIdObjects(id).stream()
-                .map(campaignData -> {
-                    String title = (String) campaignData[1];
-                    String description = (String) campaignData[2];
-                    LocalDateTime createdAt = campaignData[3] instanceof Timestamp 
-                            ? ((Timestamp) campaignData[3]).toLocalDateTime() 
-                            : null;
-                    Double goalAmount = (Double) campaignData[4];
-                    Double collectedAmount = (Double) campaignData[5];
-                    CampaignStatus status = (CampaignStatus) campaignData[6];
+        default Optional<CampaignResponseDTO> findCampaignById(long id) {
+                return findCampaignByIdObjects(id).stream()
+                                .map(campaignData -> {
+                                        long campaignId = (long) campaignData[0];
+                                        String campaignTitle = (String) campaignData[1];
+                                        String campaignDescription = (String) campaignData[2];
+                                        LocalDateTime campaignCreatedAt = toLocalDateTime(campaignData[3]);
+                                        double campaignGoalAmount = (double) campaignData[4];
+                                        double campaignCollectedAmount = (double) campaignData[5];
+                                        CampaignStatus campaignStatus = (CampaignStatus) campaignData[6];
 
-                    return new CampaignDTO(title, description, createdAt, goalAmount, collectedAmount, status);
-                })
-                .findFirst()
-                .orElse(null));
-                
-    }
+                                        return new CampaignResponseDTO(campaignId, campaignTitle, campaignDescription,
+                                                        campaignCreatedAt, campaignGoalAmount, campaignCollectedAmount,
+                                                        campaignStatus);
+                                })
+                                .findFirst();
+        }
 
-    Optional<Campaign> findByTitle(String title);
+        private LocalDateTime toLocalDateTime(Object obj) {
+                if (obj instanceof Timestamp timestamp) {
+                        return timestamp.toLocalDateTime();
+                } else if (obj instanceof LocalDateTime ldt) {
+                        return ldt;
+                }
+                return null;
+        }
 
-    @Query("""
-            SELECT c.title, c.description,  c.createdAt ,c.goalAmount, c.collectedAmount, c.status
-            FROM Campaign c
-            """)
-    List<Object[]> findAllCampaignObjects();
+        Optional<Campaign> findByTitle(String title);
 
-    default List<CampaignDTO> findAllCampaign() {
-        return findAllCampaignObjects().stream()
-                .map(campaignData -> {
-                    String title = (String) campaignData[0];
-                    String description = (String) campaignData[1];
-                    LocalDateTime createdAt = campaignData[2] instanceof Timestamp 
-                            ? ((Timestamp) campaignData[2]).toLocalDateTime() 
-                            : null;
-                    Double goalAmount = (Double) campaignData[3];
-                    Double collectedAmount = (Double) campaignData[4];
-                    CampaignStatus status = (CampaignStatus) campaignData[5];
+        @Query("""
+                        SELECT c.id, c.title, c.description,  c.createdAt ,c.goalAmount, c.collectedAmount, c.status
+                        FROM Campaign c
+                        """)
+        List<Object[]> findAllCampaignObjects();
 
-                    return new CampaignDTO(title, description, createdAt, goalAmount, collectedAmount, status);
-                })
-                .toList();
-    }
+        default List<CampaignResponseDTO> findAllCampaign() {
+                return findAllCampaignObjects().stream()
+                                .map(campaignData -> {
+                                        Long id = (Long) campaignData[0];
+                                        String title = (String) campaignData[1];
+                                        String description = (String) campaignData[2];
+                                        LocalDateTime createdAt = toLocalDateTime(campaignData[3]);
+                                        Double goalAmount = (Double) campaignData[4];
+                                        Double collectedAmount = (Double) campaignData[5];
+                                        CampaignStatus status = (CampaignStatus) campaignData[6];
 
+                                        return new CampaignResponseDTO(
+                                                        id,
+                                                        title,
+                                                        description,
+                                                        createdAt,
+                                                        goalAmount,
+                                                        collectedAmount,
+                                                        status);
+                                })
+                                .toList();
+        }
 
 }

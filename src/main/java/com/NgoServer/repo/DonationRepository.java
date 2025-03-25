@@ -1,16 +1,12 @@
 package com.NgoServer.repo;
 
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.NgoServer.models.User;
+import com.NgoServer.models.Donation;
 
 
 @Repository
-public interface DonationRepository extends JpaRepository<User, Long> {
+public interface DonationRepository extends JpaRepository<Donation, Long> {
 
-    Optional<User> findByEmail(String email);
-    
 }

@@ -8,6 +8,7 @@ com\NgoServer\models\Donation.class
 com\NgoServer\controller\BlogController.class
 com\NgoServer\repo\VolunteerRepository.class
 com\NgoServer\services\BlogServices.class
+com\NgoServer\dto\EventResponseDTO.class
 com\NgoServer\dto\CommentBodyDTO.class
 com\NgoServer\services\DonorService.class
 com\NgoServer\exceptions\CampaignAlreadyExits.class
@@ -35,6 +36,7 @@ com\NgoServer\dto\CommentResponseDTO.class
 com\NgoServer\config\SpringConfig.class
 com\NgoServer\models\Campaign.class
 com\NgoServer\services\DonationService.class
+com\NgoServer\config\CustomAccessDeniedHandler.class
 com\NgoServer\utils\PaymentStatus.class
 com\NgoServer\exceptions\UserNotFoundException.class
 com\NgoServer\controller\AuthController.class
@@ -45,6 +47,9 @@ com\NgoServer\exceptions\UserAlreadyExists.class
 com\NgoServer\controller\VolunteerController.class
 com\NgoServer\exceptions\PasswordNotMatchException.class
 com\NgoServer\handler\BlogExceptionHandler.class
+com\NgoServer\dto\CampaignBodyDTO.class
+com\NgoServer\dto\DonationResponseDTO.class
+com\NgoServer\dto\EventBodyDTO.class
 com\NgoServer\services\AuthServices.class
 com\NgoServer\repo\AuthRepository.class
 com\NgoServer\dto\ChangePasswordDTO.class
@@ -54,9 +59,8 @@ com\NgoServer\repo\DonationRepository.class
 com\NgoServer\services\VolunteerService.class
 com\NgoServer\utils\Role.class
 com\NgoServer\exceptions\BlogAlreadyExistsException.class
+com\NgoServer\dto\CampaignResponseDTO.class
 com\NgoServer\repo\DonorRepository.class
 com\NgoServer\services\CampaignService.class
-com\NgoServer\dto\CampaignDTO.class
 com\NgoServer\models\Event.class
 com\NgoServer\dto\BlogBodyDTO.class
-com\NgoServer\dto\DonorWithCampaignsDTO.class

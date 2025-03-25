@@ -2,6 +2,7 @@ package com.NgoServer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,12 +27,14 @@ public class AuthController {
     private AuthServices authServices;
 
     @PostMapping("/register")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
         ResponseDTO dto = authServices.registerUser(userDTO);
         return ResponseEntity.ok().body(dto);
     }
 
     @PostMapping("/login")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         TokenResponse dto = authServices.loginUser(loginDTO);
         return ResponseEntity.ok().body(dto);
@@ -39,16 +42,19 @@ public class AuthController {
     }
 
     @GetMapping("/user")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DONOR', 'VOLUNTEER')")
     public ResponseEntity<?> getUser() {
         return ResponseEntity.ok().body(authServices.getCurrentUserDetails());
     }
 
     @GetMapping("/logout")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DONOR', 'VOLUNTEER')")
     public ResponseEntity<?> logout() {
         return ResponseEntity.ok().body(authServices.logoutUser());
     }
 
     @PutMapping("/change-password")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DONOR', 'VOLUNTEER')")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO)
             throws UserNotFoundException {
         return ResponseEntity.ok()
@@ -56,6 +62,7 @@ public class AuthController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok().body(authServices.getAllUsers());
     }

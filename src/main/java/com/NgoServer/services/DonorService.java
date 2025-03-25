@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.NgoServer.dto.DonorDTO;
-import com.NgoServer.dto.DonorWithCampaignsDTO;
 import com.NgoServer.exceptions.UserNotFoundException;
+import com.NgoServer.models.Donor;
 import com.NgoServer.repo.DonorRepository;
 
 @Service
@@ -18,8 +18,8 @@ public class DonorService {
 
 
 
-    public DonorWithCampaignsDTO getDonorById(long id) {
-        DonorWithCampaignsDTO donor = donorRepository.findDonorById(id);
+    public Donor getDonorById(long id) {
+        Donor donor = donorRepository.findDonorById(id);
         if(donor == null){
             throw new UserNotFoundException("Donor not found");
         }

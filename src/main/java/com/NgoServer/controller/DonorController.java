@@ -2,6 +2,7 @@ package com.NgoServer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +21,13 @@ public class DonorController {
 
 
     @GetMapping
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> getAllDonors() {
         return ResponseEntity.ok().body(donorService.getAllDonors());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> getDonorById(@PathVariable Long id) {
         return ResponseEntity.ok().body(donorService.getDonorById(id));
     }

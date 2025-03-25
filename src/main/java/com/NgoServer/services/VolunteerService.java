@@ -8,7 +8,6 @@ import com.NgoServer.repo.VolunteerRepository;
 @Service
 public class VolunteerService {
 
-
     @Autowired
     private VolunteerRepository volunteerRepository;
     

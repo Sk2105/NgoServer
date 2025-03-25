@@ -47,8 +47,9 @@ public class BlogServices {
         if (blogDTO.title().isEmpty() || blogDTO.content().isEmpty() || blogDTO.image().isEmpty()) {
             throw new FoundEmptyElementException("All fields are required");
         }
+        BlogResponseDTO b = repository.findByTitle(blogDTO.title());
 
-        if (repository.findByTitle(blogDTO.title()) != null) {
+        if (b != null) {
             throw new BlogAlreadyExistsException("Blog with this title already exists");
         }
 
