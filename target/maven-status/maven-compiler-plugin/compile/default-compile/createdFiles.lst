@@ -62,5 +62,6 @@ com\NgoServer\exceptions\BlogAlreadyExistsException.class
 com\NgoServer\dto\CampaignResponseDTO.class
 com\NgoServer\repo\DonorRepository.class
 com\NgoServer\services\CampaignService.class
+com\NgoServer\config\GlobalCorsOrigin.class
 com\NgoServer\models\Event.class
 com\NgoServer\dto\BlogBodyDTO.class
