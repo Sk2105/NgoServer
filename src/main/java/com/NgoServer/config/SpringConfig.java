@@ -43,7 +43,7 @@ public class SpringConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://0.0.0.0:0")); // Allowed domains
+        config.setAllowedOrigins(List.of("*")); // Allowed domains
         config.setAllowedHeaders(List.of("*")); // Allow all headers
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allowed methods
         source.registerCorsConfiguration("/**", config); // Apply to all endpoints
