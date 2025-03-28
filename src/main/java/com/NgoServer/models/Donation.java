@@ -2,7 +2,6 @@ package com.NgoServer.models;
 
 import java.time.LocalDateTime;
 import com.NgoServer.utils.PaymentStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +25,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Donation {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,17 +37,19 @@ public class Donation {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "donor_id")
-    @JsonIgnore
+    @JoinColumn(name = "donor_id", nullable = false)
     private Donor donor;
 
-    @ManyToOne
-    @JoinColumn(name = "campaign_id")
-    private Campaign campaign;
-
+    @Column
     private String paymentId;
 
+    @Column(nullable = false)
+    private String orderId;
+
+    @Column
+    private String signature;
+
     @Enumerated(EnumType.STRING)
-    private PaymentStatus status;
+    private PaymentStatus status = PaymentStatus.PENDING;
 
 }

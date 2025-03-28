@@ -4,14 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.NgoServer.dto.DonationResponseDTO;
 import com.NgoServer.dto.DonorDTO;
+import com.NgoServer.dto.DonorResponseDTO;
 import com.NgoServer.exceptions.UserNotFoundException;
-import com.NgoServer.models.Campaign;
 import com.NgoServer.models.Donation;
 import com.NgoServer.models.Donor;
 import com.NgoServer.models.User;
-import com.NgoServer.utils.CampaignStatus;
-import com.NgoServer.utils.PaymentStatus;
 import com.NgoServer.utils.Role;
 
 import java.sql.Timestamp;
@@ -68,28 +67,22 @@ public interface DonorRepository extends JpaRepository<Donor, Long> {
     List<Object[]> findDonorDetailsByIdObjects(Long donorId);
 
     /**
-     * Retrieves a donor by their ID and returns a {@link DonorWithCampaignsDTO}
+     * Retrieves a donor by their ID and returns a {@link DonorResponseDTO}
      * containing the donor's
-     * details and associated campaigns.
+     * details and associated donations.
      *
      * @param donorId the ID of the donor
-     * @return a {@link DonorWithCampaignsDTO} with the donor's details and
-     *         campaigns
+     * @return a {@link DonorResponseDTO} with the donor's details and
+     *         donations
      */
-    default Donor findDonorById(long donorId) {
+    default DonorResponseDTO findDonorById(long donorId) {
         return findDonorDetailsByIdObjects(donorId).stream()
-                .map(
-                        this::toDonor)
-                .findFirst().orElseThrow(() -> new UserNotFoundException("Donor not found"));
-
+                .map(this::toDonor)
+                .findFirst()
+                .orElseThrow(() -> new UserNotFoundException("Donor not found"));
     }
 
-    private Donor toDonor(Object[] donorData) {
-        Donor donor = new Donor();
-        donor.setId((Long) donorData[0]);
-        donor.setLastDonation(toLocalDateTime(donorData[1]));
-        donor.setTotalDonation((Double) donorData[2]);
-
+    private DonorResponseDTO toDonor(Object[] donorData) {
         User user = new User();
         user.setId((Long) donorData[3]);
         user.setUsername((String) donorData[4]);
@@ -98,12 +91,12 @@ public interface DonorRepository extends JpaRepository<Donor, Long> {
         user.setCreatedAt(toLocalDateTime(donorData[7]));
         user.setRole(Role.DONOR);
 
-        donor.setUser(user);
-
-        List<Donation> donations = findDonationsByDonorId(donor.getId());
-        donor.setDonations(donations);
-
-        return donor;
+        return new DonorResponseDTO(
+                (Long) donorData[0],
+                (Double) donorData[2],
+                toLocalDateTime(donorData[1]),
+                user,
+                findDonationByDonorId((Long) donorData[0]));
     }
 
     /**
@@ -117,13 +110,13 @@ public interface DonorRepository extends JpaRepository<Donor, Long> {
      */
     @Query("""
             SELECT
-                d.id, d.amount, d.createdAt, d.paymentId, d.status,
-                c.id, c.title, c.description, c.createdAt, c.status
+               new  com.NgoServer.dto.DonationResponseDTO(
+                    d.id, d.amount, d.createdAt,d.paymentId,  d.orderId, d.signature,d.status
+                )
             FROM Donation d
-            JOIN d.campaign c
             WHERE d.donor.id = :donorId
             """)
-    List<Object[]> findDonationsByDonorIdObjects(Long donorId);
+    List<DonationResponseDTO> findDonationByDonorId(Long donorId);
 
     /**
      * Retrieves a list of {@link Donation} objects associated with the donor
@@ -132,39 +125,26 @@ public interface DonorRepository extends JpaRepository<Donor, Long> {
      * @param donorId the ID of the donor
      * @return a list of {@link Donation} objects associated with the donor
      */
-    default List<Donation> findDonationsByDonorId(Long donorId) {
-        return findDonationsByDonorIdObjects(donorId).stream()
-                .map(this::toDonation)
-                .toList();
+
+    @Query("SELECT d.id, d.lastDonation, d.totalDonation, u.id, u.username, u.email, u.phoneNumber, u.createdAt "
+            + "FROM Donor d "
+            + "JOIN d.user u where u.id = :userId")
+    List<Object[]> findDonorByUserIdObjects(long userId);
+
+    default DonorResponseDTO findDonorByUserId(long userId) {
+        return findDonorByUserIdObjects(userId).stream()
+                .map(this::toDonor)
+                .findFirst().orElseThrow(() -> new UserNotFoundException("Donor not found"));
     }
 
-    private Donation toDonation(Object[] donationData) {
-        Donation donation = new Donation();
-        donation.setId((Long) donationData[0]);
-        donation.setAmount((Double) donationData[1]);
-        donation.setCreatedAt(toLocalDateTime(donationData[2]));
-        donation.setPaymentId((String) donationData[3]);
-        donation.setStatus((PaymentStatus) donationData[4]);
-
-        Campaign campaign = new Campaign();
-        campaign.setId((Long) donationData[5]);
-        campaign.setTitle((String) donationData[6]);
-        campaign.setDescription((String) donationData[7]);
-        campaign.setCreatedAt(toLocalDateTime(donationData[8]));
-        campaign.setStatus((CampaignStatus) donationData[9]);
-
-        donation.setCampaign(campaign);
-
-        return donation;
-    }
-
-    private LocalDateTime toLocalDateTime(Object obj) {
-        if (obj instanceof Timestamp timestamp) {
-            return timestamp.toLocalDateTime();
-        } else if (obj instanceof LocalDateTime ldt) {
+    private LocalDateTime toLocalDateTime(Object o) {
+        if (o instanceof Timestamp ts) {
+            return ts.toLocalDateTime();
+        } else if (o instanceof LocalDateTime ldt) {
             return ldt;
         }
         return null;
     }
 
 }
+

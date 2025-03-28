@@ -32,8 +32,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
                 return findByTitleObjects(title).stream()
                                 .map(this::toBlogResponseDTO)
                                 .findFirst()
-                                .orElseThrow(() -> new BlogNotFoundException(
-                                                "Blog with title=" + title + " does not exist"));
+                                .orElse(null);
         }
 
         @Query(value = """

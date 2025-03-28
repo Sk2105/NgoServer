@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.NgoServer.dto.CampaignBodyDTO;
-import com.NgoServer.dto.CampaignResponseDTO;
 import com.NgoServer.dto.ResponseDTO;
 import com.NgoServer.exceptions.CampaignAlreadyExits;
 import com.NgoServer.exceptions.CampaignNotFoundException;
@@ -23,8 +22,8 @@ public class CampaignService {
     @Autowired
     private CampaignRepository campaignRepository;
 
-    public List<CampaignResponseDTO> getAllCampaigns() {
-        return campaignRepository.findAllCampaign();
+    public List<Campaign> getAllCampaigns() {
+        return campaignRepository.findAll();
     }
 
     public ResponseDTO addCampaign(CampaignBodyDTO campaignDTO) throws CampaignAlreadyExits {
@@ -58,8 +57,8 @@ public class CampaignService {
 
     }
 
-    public CampaignResponseDTO getCampaignById(Long id) {
-        Optional<CampaignResponseDTO> optionalCampaign = campaignRepository.findCampaignById(id);
+    public Campaign getCampaignById(Long id) {
+        Optional<Campaign> optionalCampaign = campaignRepository.findById(id);
         if (optionalCampaign.isEmpty()) {
             throw new CampaignNotFoundException("Campaign not found");
         }
@@ -89,6 +88,5 @@ public class CampaignService {
     public void deleteCampaign(Long id) throws CampaignNotFoundException {
         getCampaignById(id);
         campaignRepository.deleteById(id);
-        
     }
 }

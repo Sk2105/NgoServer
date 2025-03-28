@@ -180,4 +180,17 @@ public class AuthServices implements UserDetailsService {
         return authRepository.findAll();
     }
 
+    public User getUserById(Long id) {
+        return authRepository.findById(id).get();
+    }
+
+    public ResponseDTO updateUser(Long id, UserDTO userDTO) {
+        User user = getUserById(id);
+        user.setUsername(userDTO.username());
+        user.setEmail(userDTO.email());
+        user.setPhoneNumber(userDTO.phoneNumber());
+        authRepository.save(user);
+        return new ResponseDTO("User Updated Successfully", HttpStatus.OK.value());
+    }
+
 }

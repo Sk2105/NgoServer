@@ -3,6 +3,7 @@ com\NgoServer\dto\DonorDTO.class
 com\NgoServer\repo\BlogRepository.class
 com\NgoServer\utils\CampaignStatus.class
 com\NgoServer\models\Blog.class
+com\NgoServer\dto\InitiateBodyDTO.class
 com\NgoServer\filter\JwtAuthenticationFilter.class
 com\NgoServer\models\Donation.class
 com\NgoServer\controller\BlogController.class
@@ -15,6 +16,7 @@ com\NgoServer\exceptions\CampaignAlreadyExits.class
 com\NgoServer\dto\BlogResponseDTO.class
 com\NgoServer\models\User.class
 com\NgoServer\models\Donor.class
+com\NgoServer\dto\DonorResponseDTO.class
 com\NgoServer\services\EventService.class
 com\NgoServer\jwt\JwtUtil.class
 com\NgoServer\utils\EventStatus.class
@@ -26,6 +28,7 @@ com\NgoServer\dto\TokenResponse.class
 com\NgoServer\utils\VolunteerStatus.class
 com\NgoServer\exceptions\CampaignNotFoundException.class
 com\NgoServer\repo\CampaignRepository.class
+com\NgoServer\dto\UserResponseDTO.class
 com\NgoServer\NgoServerApplication.class
 com\NgoServer\models\Comment.class
 com\NgoServer\handler\AuthExceptionHandler.class
@@ -37,6 +40,7 @@ com\NgoServer\config\SpringConfig.class
 com\NgoServer\models\Campaign.class
 com\NgoServer\services\DonationService.class
 com\NgoServer\config\CustomAccessDeniedHandler.class
+com\NgoServer\dto\VerifyPaymentBodyDTO.class
 com\NgoServer\utils\PaymentStatus.class
 com\NgoServer\exceptions\UserNotFoundException.class
 com\NgoServer\controller\AuthController.class
@@ -55,6 +59,7 @@ com\NgoServer\repo\AuthRepository.class
 com\NgoServer\dto\ChangePasswordDTO.class
 com\NgoServer\exceptions\BlogNotFoundException.class
 com\NgoServer\models\Volunteer.class
+com\NgoServer\dto\VolunteerResponseDTO.class
 com\NgoServer\repo\DonationRepository.class
 com\NgoServer\services\VolunteerService.class
 com\NgoServer\utils\Role.class
@@ -62,6 +67,7 @@ com\NgoServer\exceptions\BlogAlreadyExistsException.class
 com\NgoServer\dto\CampaignResponseDTO.class
 com\NgoServer\repo\DonorRepository.class
 com\NgoServer\services\CampaignService.class
+com\NgoServer\dto\VolunteerStatusDTO.class
 com\NgoServer\config\GlobalCorsOrigin.class
 com\NgoServer\models\Event.class
 com\NgoServer\dto\BlogBodyDTO.class

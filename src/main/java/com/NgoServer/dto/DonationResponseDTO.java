@@ -8,9 +8,10 @@ public record DonationResponseDTO(
         Long id,
         Double amount,
         LocalDateTime createdAt,
-        DonorDTO donor,
         String paymentId,
-        PaymentStatus status,
-        CampaignResponseDTO campaign) {
+        String orderId,
+        String signature,
+        PaymentStatus status
+) {
 
 }

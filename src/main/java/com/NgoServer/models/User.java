@@ -42,4 +42,13 @@ public class User {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
 
+    public User(Long id,String username, String email, String phoneNumber, LocalDateTime createdAt, Role role) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
+        this.createdAt = createdAt;
+    }
+
 }
