@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.NgoServer.dto.EventBodyDTO;
 import com.NgoServer.services.EventService;
 
-@RequestMapping("/events")
+@RequestMapping("/api/events")
 @RestController
 public class EventController {
 

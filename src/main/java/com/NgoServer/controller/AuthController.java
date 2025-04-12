@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.NgoServer.dto.ChangePasswordDTO;
 import com.NgoServer.dto.LoginDTO;
+import com.NgoServer.dto.OTPBodyDTO;
+import com.NgoServer.dto.ResetPasswordDTO;
 import com.NgoServer.dto.ResponseDTO;
 import com.NgoServer.dto.TokenResponse;
 import com.NgoServer.dto.UserDTO;
@@ -21,25 +23,52 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
     private AuthServices authServices;
 
+    /**
+     * This API is used to register a user
+     * 
+     * @param userDTO contains the information of the user
+     * @return the token response
+     */
     @PostMapping("/register")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
-        ResponseDTO dto = authServices.registerUser(userDTO);
+        TokenResponse dto = authServices.registerUser(userDTO);
         return ResponseEntity.ok().body(dto);
     }
 
+    /**
+     * This API is used to login user
+     * 
+     * @param loginDTO contains email and password
+     * @return TokenResponse which contains jwt token
+     * @throws UserNotFoundException if user is not found
+     */
     @PostMapping("/login")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         TokenResponse dto = authServices.loginUser(loginDTO);
         return ResponseEntity.ok().body(dto);
 
+    }
+
+    @PostMapping("/verify-otp")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DONOR', 'VOLUNTEER')")
+    public ResponseEntity<?> verifyOTP(@RequestBody OTPBodyDTO responseDTO) {
+        ResponseDTO message = authServices.verifyUser(responseDTO.otp());
+        return ResponseEntity.ok().body(message);
+    }
+
+    @PostMapping("/resend-otp")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DONOR', 'VOLUNTEER')")
+    public ResponseEntity<?> resendOTP() {
+        ResponseDTO message = authServices.resendOTP();
+        return ResponseEntity.ok().body(message);
     }
 
     @GetMapping("/user")
@@ -80,4 +109,30 @@ public class AuthController {
         return ResponseEntity.ok().body(authServices.updateUser(id, userDTO));
     }
 
+    @GetMapping("/current-donor")
+    @PreAuthorize("hasRole('DONOR')")
+    public ResponseEntity<?> getCurrentDonor() {
+        return ResponseEntity.ok().body(authServices.getCurrentDonorDetails());
+    }
+
+    @GetMapping("/current-volunteer")
+    @PreAuthorize("hasRole('VOLUNTEER')")
+    public ResponseEntity<?> getCurrentVolunteer() {
+        return ResponseEntity.ok().body(authServices.getCurrentVolunteerDetails());
+    }
+
+
+    @PostMapping("/forgot-password")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> forgotPassword() {
+        ResponseDTO message = authServices.forgetPassword();
+        return ResponseEntity.ok().body(message);
+    }
+
+    @PostMapping("/reset-password")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
+        ResponseDTO message = authServices.resetPassword(resetPasswordDTO.otp(), resetPasswordDTO.password());
+        return ResponseEntity.ok().body(message);
+    }
 }

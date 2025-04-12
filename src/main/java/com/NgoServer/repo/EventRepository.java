@@ -20,7 +20,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("""
             SELECT e.id, e.title, e.description, e.image, e.location, e.startDate, e.endDate, e.createdAt, e.updatedAt, e.status
-            FROM Event e
+            FROM Event e ORDER BY e.id DESC
             """)
     List<Object[]> findAllEventsObjects();
 
@@ -66,7 +66,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("""
             SELECT e.id, e.title, e.description, e.image, e.location, e.startDate, e.endDate, e.createdAt, e.updatedAt, e.status
             FROM Event e
-            WHERE e.id = :id
+            WHERE e.id = :id ORDER BY e.id DESC
             """)
     public List<Object[]> getEventByIdObjects(Long id);
 
@@ -112,7 +112,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             FROM Event e
             JOIN e.volunteers v
             JOIN v.user u
-            WHERE e.id = :eventId
+            WHERE e.id = :eventId ORDER BY v.id DESC
             """)
     public List<Object[]> getVolunteersByEventIdObject(Long eventId);
 
@@ -146,7 +146,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             SELECT v.id, u.id, u.username, u.email, u.phoneNumber, u.createdAt
             FROM Volunteer v
             JOIN v.user u
-            WHERE u.id = :userId
+            WHERE u.id = :userId ORDER BY v.id DESC
             """)
     List<Object[]> findVolunteerDetailsByUserId(Long userId);
 

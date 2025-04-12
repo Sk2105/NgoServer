@@ -16,7 +16,7 @@ import com.NgoServer.dto.CommentBodyDTO;
 import com.NgoServer.services.BlogServices;
 
 @RestController
-@RequestMapping("blogs")
+@RequestMapping("/api/blogs")
 public class BlogController {
 
     @Autowired

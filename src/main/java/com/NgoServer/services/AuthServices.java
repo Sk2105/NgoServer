@@ -13,10 +13,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.NgoServer.dto.DonorResponseDTO;
 import com.NgoServer.dto.LoginDTO;
 import com.NgoServer.dto.ResponseDTO;
 import com.NgoServer.dto.TokenResponse;
 import com.NgoServer.dto.UserDTO;
+import com.NgoServer.dto.VolunteerResponseDTO;
 import com.NgoServer.exceptions.FoundEmptyElementException;
 import com.NgoServer.exceptions.PasswordNotMatchException;
 import com.NgoServer.exceptions.UserAlreadyExists;
@@ -48,8 +51,11 @@ public class AuthServices implements UserDetailsService {
     @Autowired
     private VolunteerRepository volunteerRepository;
 
+    @Autowired
+    private MailService mailService;
+
     // register user
-    public ResponseDTO registerUser(UserDTO userDTO) throws UserAlreadyExists {
+    public TokenResponse registerUser(UserDTO userDTO) throws UserAlreadyExists {
 
         // check if user is already exists
         Optional<User> obj = authRepository.findByEmail(userDTO.email());
@@ -57,6 +63,10 @@ public class AuthServices implements UserDetailsService {
             throw new UserAlreadyExists("User Already Exists");
         }
         User user = toUser(userDTO);
+
+        // send otp to user email
+        int otp = (int) (Math.random() * 1000000); // generate random 6 digit otp
+        user.setVerificationCode(otp);
 
         if (userDTO.role() == Role.DONOR) {
             Donor donor = new Donor();
@@ -75,7 +85,10 @@ public class AuthServices implements UserDetailsService {
             authRepository.save(user);
         }
 
-        return new ResponseDTO("User Registered", HttpStatus.CREATED.value());
+        mailService.sendOTP(user.getEmail(), otp);
+
+        String token = jwtUtil.generateToken(user.getEmail());
+        return new TokenResponse(token, HttpStatus.OK.value());
 
     }
 
@@ -99,6 +112,35 @@ public class AuthServices implements UserDetailsService {
         String token = jwtUtil.generateToken(existedUser.get().getEmail());
         return new TokenResponse(token, HttpStatus.OK.value());
 
+    }
+
+    public ResponseDTO verifyUser(int otp) throws UserNotFoundException {
+        User user = getCurrentUserDetails();
+        if (user.getIsVerified()) {
+            throw new RuntimeException("User Already Verified");
+        } else if (user.getVerificationCode() == null) {
+            throw new RuntimeException("OTP Not Sent");
+        } else if (user.getVerificationCodeExpiry().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("OTP Expired");
+        } else if (user.getVerificationCode() == otp) {
+            user.setIsVerified(true);
+            authRepository.save(user);
+            return new ResponseDTO("User Verified Successfully", HttpStatus.OK.value());
+        } else {
+            throw new RuntimeException("Invalid OTP");
+        }
+    }
+
+    public ResponseDTO resendOTP() throws UserNotFoundException {
+        User user = getCurrentUserDetails();
+        if (user.getIsVerified()) {
+            throw new RuntimeException("User Already Verified");
+        }
+        int otp = (int) (Math.random() * 1000000); // generate random 6 digit otp
+        user.setVerificationCode(otp);
+        authRepository.save(user);
+        mailService.sendOTP(user.getEmail(), otp);
+        return new ResponseDTO("OTP Sent Successfully", HttpStatus.OK.value());
     }
 
     private User toUser(UserDTO userDTO) {
@@ -193,4 +235,48 @@ public class AuthServices implements UserDetailsService {
         return new ResponseDTO("User Updated Successfully", HttpStatus.OK.value());
     }
 
+    public DonorResponseDTO getCurrentDonorDetails() {
+        User user = getCurrentUserDetails();
+        if(user.getRole() != Role.DONOR) {
+            throw new UserNotFoundException("Donor not found");
+        }
+        
+        return donorRepository.findDonorByUserId(user.getId());
+    }
+
+    public VolunteerResponseDTO getCurrentVolunteerDetails() {
+        User user = getCurrentUserDetails();
+        return volunteerRepository.findVolunteerByUserId(user.getId());
+    }
+
+    public ResponseDTO forgetPassword() {
+        User user = getCurrentUserDetails();
+        if (user == null) {
+            throw new RuntimeException("Email Not Found");
+        }
+        int otp = (int) (Math.random() * 1000000); // generate random 6 digit otp
+        user.setVerificationCode(otp);
+        user.setVerificationCodeExpiry(LocalDateTime.now().plusMinutes(5)); // set expiry time to 5 minutes
+        authRepository.save(user);
+        // send otp to user email
+        mailService.sendOTP(user.getEmail(), otp);
+        return new ResponseDTO("OTP Sent Successfully", HttpStatus.OK.value());
+    }
+    public ResponseDTO resetPassword(int otp, String newPassword) {
+        User user = getCurrentUserDetails();
+        if (user == null) {
+            throw new RuntimeException("Email Not Found");
+        }
+        if (user.getVerificationCode() == null) {
+            throw new RuntimeException("OTP Not Sent");
+        } else if (user.getVerificationCodeExpiry().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("OTP Expired");
+        } else if (user.getVerificationCode() == otp) {
+            user.setPasswordHash(encoder.encode(newPassword));
+            authRepository.save(user);
+            return new ResponseDTO("Password Reset Successfully", HttpStatus.OK.value());
+        } else {
+            throw new RuntimeException("Invalid OTP");
+        }
+    }
 }

@@ -20,7 +20,7 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
     @Query(value = """
             SELECT d.id, d.amount, d.created_at, d.payment_id, d.status, d.order_id, d.signature, d.donor_id
             FROM donations d
-            WHERE d.order_id = :orderId
+            WHERE d.order_id = :orderId ORDER BY d.id DESC
             """, nativeQuery = true)
     List<Object[]> findDonationByOrderIdObjects(String orderId);
 
@@ -57,7 +57,7 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
             SELECT d.id, d.total_donation, d.last_donation, u.id, u.username, u.email, u.phone_number, u.created_at
             FROM donors d
             JOIN users u ON u.id = d.user_id
-            WHERE d.id = :donorId
+            WHERE d.id = :donorId ORDER BY d.id DESC
             """, nativeQuery = true)
     List<Object[]> findDonorByDonorIdObjects(Long donorId);
 
@@ -92,7 +92,7 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
             , d.paymentId, d.orderId, d.signature,d.status)
              FROM Donation d
              JOIN d.donor
-             JOIN d.donor.user u
+             JOIN d.donor.user u ORDER BY d.id DESC
              """)
     List<Donation> findAllDonations();
 
@@ -104,7 +104,7 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
              FROM Donation d
              JOIN d.donor
              JOIN d.donor.user u
-             WHERE d.id = :id
+             WHERE d.id = :id ORDER BY d.id DESC
              """)
     Optional<Donation> findDonationById(Long id);
 

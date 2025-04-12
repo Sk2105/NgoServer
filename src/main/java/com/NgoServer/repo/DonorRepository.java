@@ -22,7 +22,7 @@ public interface DonorRepository extends JpaRepository<Donor, Long> {
 
     @Query("SELECT d.id, d.lastDonation, d.totalDonation, u.id, u.username, u.email, u.phoneNumber, u.createdAt "
             + "FROM Donor d "
-            + "JOIN d.user u")
+            + "JOIN d.user u ORDER BY d.id DESC")
     List<Object[]> findAllDonorsObjects();
 
     default List<DonorDTO> findAllDonors() {
@@ -62,7 +62,7 @@ public interface DonorRepository extends JpaRepository<Donor, Long> {
             u.id AS user_id, u.username, u.email, u.phone_number, u.created_at
             FROM donors d
             JOIN users u ON u.id = d.user_id
-            WHERE d.id = :donorId
+            WHERE d.id = :donorId ORDER BY d.id DESC
             """, nativeQuery = true)
     List<Object[]> findDonorDetailsByIdObjects(Long donorId);
 
@@ -114,7 +114,7 @@ public interface DonorRepository extends JpaRepository<Donor, Long> {
                     d.id, d.amount, d.createdAt,d.paymentId,  d.orderId, d.signature,d.status
                 )
             FROM Donation d
-            WHERE d.donor.id = :donorId
+            WHERE d.donor.id = :donorId ORDER BY d.id DESC
             """)
     List<DonationResponseDTO> findDonationByDonorId(Long donorId);
 
@@ -128,7 +128,7 @@ public interface DonorRepository extends JpaRepository<Donor, Long> {
 
     @Query("SELECT d.id, d.lastDonation, d.totalDonation, u.id, u.username, u.email, u.phoneNumber, u.createdAt "
             + "FROM Donor d "
-            + "JOIN d.user u where u.id = :userId")
+            + "JOIN d.user u where u.id = :userId ORDER BY d.id DESC")
     List<Object[]> findDonorByUserIdObjects(long userId);
 
     default DonorResponseDTO findDonorByUserId(long userId) {

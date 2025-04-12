@@ -1,6 +1,9 @@
 package com.NgoServer.models;
 
 import java.time.LocalDateTime;
+
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
 import com.NgoServer.utils.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -16,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Builder.Default;
 
 @Entity
 @Table(name = "users")
@@ -40,9 +44,18 @@ public class User {
     @Column(nullable = false)
     private Role role; // ADMIN, DONOR, VOLUNTEER
     @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    public User(Long id,String username, String email, String phoneNumber, LocalDateTime createdAt, Role role) {
+    @Column
+    private Boolean isVerified = false;
+    @JsonIgnore
+    private Integer verificationCode = 0;
+
+    @Column(columnDefinition = "TIMESTAMP")
+    @JsonIgnore
+    private LocalDateTime verificationCodeExpiry = LocalDateTime.now().plusMinutes(5);
+
+    public User(Long id, String username, String email, String phoneNumber, LocalDateTime createdAt, Role role) {
         this.id = id;
         this.username = username;
         this.email = email;

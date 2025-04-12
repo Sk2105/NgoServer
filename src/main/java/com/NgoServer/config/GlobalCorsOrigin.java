@@ -10,7 +10,7 @@ public class GlobalCorsOrigin implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(@SuppressWarnings("null") CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173") // ✅ Allow frontend
+                .allowedOrigins("http://localhost:5173","https://ngo-website-client-side.vercel.app") // ✅ Allow frontend
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(false);

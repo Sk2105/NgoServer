@@ -18,7 +18,7 @@ import com.NgoServer.dto.ResponseDTO;
 import com.NgoServer.services.CampaignService;
 
 @RestController
-@RequestMapping("/campaigns")
+@RequestMapping("/api/campaigns")
 public class CampaignController {
 
     @Autowired

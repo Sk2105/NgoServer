@@ -15,7 +15,7 @@ import com.NgoServer.dto.VolunteerStatusDTO;
 import com.NgoServer.services.VolunteerService;
 
 @RestController
-@RequestMapping("/volunteers")
+@RequestMapping("/api/volunteers")
 public class VolunteerController {
 
 

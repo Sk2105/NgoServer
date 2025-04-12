@@ -51,6 +51,7 @@ public class CampaignService {
         campaign.setCreatedAt(LocalDateTime.now());
         campaign.setDescription(campaignDTO.description());
         campaign.setGoalAmount(campaignDTO.goalAmount());
+        campaign.setCollectedAmount(campaignDTO.collectedAmount());
         campaign.setStatus(campaignDTO.status());
 
         return campaign;
@@ -71,14 +72,12 @@ public class CampaignService {
         if (optionalCampaign.isEmpty()) {
             throw new CampaignNotFoundException("Campaign not found");
         }
-        if (campaignRepository.findByTitle(campaignDTO.title()).isPresent()) {
-            throw new CampaignAlreadyExits("Campaign with same title already exists");
-        }
         Campaign campaign = optionalCampaign.get();
         campaign.setId(id);
         campaign.setTitle(campaignDTO.title());
         campaign.setDescription(campaignDTO.description());
         campaign.setGoalAmount(campaignDTO.goalAmount());
+        campaign.setCollectedAmount(campaignDTO.collectedAmount());
         campaignRepository.save(campaign);
         return new ResponseDTO(
                 "Campaign updated successfully",

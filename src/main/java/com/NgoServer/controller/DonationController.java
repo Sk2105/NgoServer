@@ -19,7 +19,7 @@ import com.NgoServer.services.DonationService;
 import com.razorpay.RazorpayException;
 
 @RestController
-@RequestMapping("/donations")
+@RequestMapping("/api/donations")
 public class DonationController {
 
     @Autowired
@@ -29,13 +29,13 @@ public class DonationController {
     private String keySecret;
 
     @PostMapping("/verify")
-    @PreAuthorize("hasRole('DONOR')")
+    @PreAuthorize("hasAnyRole('DONOR', 'VOLUNTEER', 'ADMIN')")
     public ResponseEntity<?> verifyPayment(@RequestBody VerifyPaymentBodyDTO body) throws RazorpayException {
         return ResponseEntity.ok().body(donationService.verifyPayment(body));
     }
 
     @PostMapping("/initiate-donation")
-    @PreAuthorize("hasRole('DONOR')")
+    @PreAuthorize("hasAnyRole('DONOR', 'VOLUNTEER', 'ADMIN')")
     public ResponseEntity<?> initiateDonation(@RequestBody InitiateBodyDTO initiateBody) {
         try {
             return ResponseEntity.ok(donationService.createOrder(initiateBody).toString());
@@ -45,11 +45,13 @@ public class DonationController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllDonations() {
         return ResponseEntity.ok().body(donationService.findAllDonation());
     }
 
     @GetMapping("/{donorId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getDonationByDonorId(@PathVariable Long donorId) {
         return ResponseEntity.ok().body(donationService.findDonationById(donorId));
     }

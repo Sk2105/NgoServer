@@ -24,7 +24,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
                         Select b.id, b.title, b.content, b.image, b.createdAt, b.updatedAt, u.id, u.username, u.email, u.phoneNumber, u.createdAt, u.role
                         FROM Blog b
                         JOIN b.author u
-                        WHERE b.title = :title
+                        WHERE b.title = :title ORDER BY b.id DESC
                         """)
         List<Object[]> findByTitleObjects(String title);
 
@@ -39,7 +39,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
                         SELECT b.id, b.title, b.content, b.image, b.created_at,b.updated_at,
                                u.id, u.username, u.email, u.phone_number, u.created_at, u.role
                         FROM blogs b
-                        JOIN users u ON b.author_id = u.id
+                        JOIN users u ON b.author_id = u.id ORDER BY b.id DESC
                         """, nativeQuery = true)
         List<Object[]> findAllBlogsObjects();
 
@@ -119,7 +119,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
                         SELECT b.id, b.title, b.content,b.image, b.createdAt,b.updatedAt, u.id, u.username, u.email, u.phoneNumber, u.createdAt, u.role
                         FROM Blog b
                         JOIN b.author u
-                        WHERE b.id = :id
+                        WHERE b.id = :id ORDER BY b.id DESC
                         """)
         List<Object[]> findBlogByIdObjects(long id);
 
@@ -160,7 +160,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
                                 FROM Comment c
                                 JOIN c.blog b
                                 JOIN b.author u
-                                WHERE b.id = :blogId
+                                WHERE b.id = :blogId ORDER BY c.id DESC
                         """)
         List<Object[]> findCommentsByBlogIdObjects(@Param("blogId") Long blogId);
 

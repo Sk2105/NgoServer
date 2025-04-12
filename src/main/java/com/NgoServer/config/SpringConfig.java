@@ -50,11 +50,12 @@ public class SpringConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login").permitAll()
-                        .requestMatchers("/blogs", "/blogs/{id}").permitAll()
-                        .requestMatchers("/events", "/events/{id}").permitAll()
-                        .requestMatchers("/campaigns", "/campaigns/{id}").permitAll()
-                        .requestMatchers("/donors", "/donors/{id}").permitAll()
+                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers("/api/blogs", "/api/blogs/{id}").permitAll()
+                        .requestMatchers("/api/events", "/api/events/{id}").permitAll()
+                        .requestMatchers("/api/campaigns", "/api/campaigns/{id}").permitAll()
+                        .requestMatchers("/api/donors", "/api/donors/{id}").permitAll()
+                        .requestMatchers( "/api/certificates/{id}.png").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(accessDeniedHandler))

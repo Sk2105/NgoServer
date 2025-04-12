@@ -9,7 +9,8 @@ public record VolunteerResponseDTO(
     Long id,
     User user,
     VolunteerStatus status,
-    List<EventResponseDTO> events
+    List<EventResponseDTO> events,
+    List<TaskResponseDTO> tasks
 
     
 ) {

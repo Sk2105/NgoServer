@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.NgoServer.services.DonorService;
 
 @RestController
-@RequestMapping("/donors")
+@RequestMapping("/api/donors")
 public class DonorController {
 
 

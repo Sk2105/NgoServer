@@ -92,10 +92,9 @@ public class EventService {
                 throw new RuntimeException("Volunteer not found for user ID: " + currentUser.getId());
             }
 
-            // if (volunteer.getStatus() == VolunteerStatus.PENDING) {
-            // throw new RuntimeException("Volunteer is not allowed to register for this
-            // event");
-            // }
+            if (volunteer.getStatus() == VolunteerStatus.PENDING) {
+                throw new RuntimeException("Volunteer is not allowed to register for this event");
+            }
 
             if (volunteer.getStatus() == VolunteerStatus.BANNED) {
                 throw new RuntimeException("Volunteer is banned from registering for events");
